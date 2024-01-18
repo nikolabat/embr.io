@@ -87,9 +87,8 @@ public object RpcCall(string rpcname,params object[] args) {
 
 public bool RegisterRpc(string rpcname, RPCFunc func) {
     CreateAndListen(rpcname,(Dictionary<string, object> args) => {
-
+        
         string? replyTo = args["replyTo"].ToString();
-        Console.WriteLine(replyTo);
         if(replyTo == null) {
             throw new Exception("Greska u deserializaciji prilikom obrade RPC-a");
         }
@@ -99,9 +98,12 @@ public bool RegisterRpc(string rpcname, RPCFunc func) {
         if(parsedargs == null) {
             throw new Exception("Greska u deserializaciji prilikom obrade RPC-a");
         }
+
         var rez = func(parsedargs);
-        Console.WriteLine(rez);
+        //Console.WriteLine(rez);
+        if(rez != null) {
         CreateAndSendTo(replyTo,new Dictionary<string,object>{{"result",rez}},1);
+        }
 
         
     });

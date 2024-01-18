@@ -16,32 +16,22 @@ public class UI : MonoBehaviour
 
        public TMP_Text txt_leaderboard;
        public Button loginbtn;
-    
+        [SerializeField]
+        private GameObject canvas;
+        private bool destroyUi = false;
        public string token;
        
        private static SignalR signalR;
        private int skor = 0;
-       private Dictionary<string,int> leaderboard = new Dictionary<string, int>();
-       void simulirajSkor() {
-        if(token == "") {
-            return;
-        }
-        skor += 5;
-            Debug.Log("update");
-             signalR.Invoke("UpdateScore",token,skor);
-        
-       
-       }
+
+     
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("simulirajSkor", 1.0f,3.0f);
+        //InvokeRepeating("simulirajSkor", 1.0f,3.0f);
         
         signalR = SignalRManager.GetSignalR();
-        signalR.On("leaderboardUpdate",(Dictionary<string,int> leaderboard) => {
-            lock(leaderboard) {
-            this.leaderboard = leaderboard;
-            }});
+        
            
              signalR.On("RegisterResult",(bool uspeh,string greska) => {
         if(uspeh) {
@@ -54,7 +44,10 @@ public class UI : MonoBehaviour
         signalR.On("LoginResult",(bool uspeh,string token) => {
         if(uspeh) {
             Debug.Log(token + " loginovan");
-            this.token = token;
+            SignalRManager.MyToken = token;
+            signalR.Invoke("EnterGame",token);
+
+            destroyUi = true;
             
             
 
@@ -67,6 +60,7 @@ public class UI : MonoBehaviour
         signalR.ConnectionStarted += (object sender,ConnectionEventArgs e) =>
         { 
             Debug.Log(string.Format("Uspostavljena veza sa serverom! ({0})",e.ConnectionId));
+           
 
        };
        var btn = this.GetComponent<Button>();
@@ -82,14 +76,11 @@ public class UI : MonoBehaviour
     void Update()
     {
     
-       txt_leaderboard.text = "";
-            foreach( var highscore in leaderboard) {
-                
-               txt_leaderboard.text += highscore.Key + ":" + highscore.Value + "\n";
-               
-            
-    }
-
+      
+     if(destroyUi) {
+            destroyUi = false;
+               Destroy(canvas);
+        }
     }
 
     void Register() {

@@ -3,13 +3,12 @@ using System.Text.Json;
 public class LeaderboardManager : IDisposable {
     private RabbitMQKom rabbit;
     private DBKom db;
-
     private Dictionary<string,int> leaderboard;
     private object _getLeaderboard(object[] args) {
         return leaderboard;
     }
    private void updateSkor(Dictionary<string,object> args) {
-    
+    lock(leaderboard) {
     string? token = args["token"].ToString();
     
     if(token == null) {
@@ -30,10 +29,10 @@ public class LeaderboardManager : IDisposable {
     leaderboard[username] = skor;
 
     db.AzurirajLeaderboard(username,skor);
-   
+    
    
     rabbit.CreateAndSendTo("leaderboardUpdates",leaderboard,1);
-
+    }
     
     
         

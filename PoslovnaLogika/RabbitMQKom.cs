@@ -101,7 +101,9 @@ public bool RegisterRpc(string rpcname, RPCFunc func) {
 
         var rez = func(parsedargs);
         //Console.WriteLine(rez);
+        if(rez != null) {
         CreateAndSendTo(replyTo,new Dictionary<string,object>{{"result",rez}},1);
+        }
 
         
     });

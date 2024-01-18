@@ -17,6 +17,15 @@ public class AccountManager : IDisposable {
     
         return Login(username,password);
     }
+    private object _logout(object[] args) {
+         string token = args[0].ToString();
+         if(token == null) {
+            throw new Exception("Losa deserializacija");
+         }
+         db.Logout(token);
+         return null;
+
+    }
     private object Register(string username,string password) {
  
         if(username == null || password == null) {
@@ -50,6 +59,7 @@ public class AccountManager : IDisposable {
         return Task.Run(() => {
             bool a = rabbit.RegisterRpc("Register",_registerHandlerFunc);
             bool b = rabbit.RegisterRpc("Login",_login);
+            bool c = rabbit.RegisterRpc("logout",_logout);
 
         });
     }

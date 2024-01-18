@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using Isopoh.Cryptography.Argon2;
 using StackExchange.Redis;
 
@@ -6,6 +7,13 @@ public class DBKom : IDisposable {
     
 private IDatabase db;
 private ConnectionMultiplexer redis;
+
+
+
+public void Logout(string token) {
+    db.HashDelete("ulogovanikorisnici",token,CommandFlags.DemandMaster);
+}
+
 
 public DBKom(string ip) {
     redis = ConnectionMultiplexer.Connect(ip);
@@ -48,8 +56,12 @@ public string Login(string username, string password) {
    if(!Argon2.Verify(hash,password)) {
         return "Greska: Netacna lozinka";
    }
-   string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+   
+   string? token =  db.HashGetAll("ulogovanikorisnici").Where(t => t.Value == username).LastOrDefault().Name;
+   if(token == null) {
+   token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
    DodajToken(token,username);
+   }
    return token;
 
 

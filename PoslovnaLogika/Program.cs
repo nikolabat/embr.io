@@ -45,5 +45,4 @@ leaderboardManager.ManageLeaderboard();
 
 
 
-
 await Task.Delay(Timeout.Infinite).ConfigureAwait(false);
