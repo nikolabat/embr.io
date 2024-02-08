@@ -15,6 +15,8 @@ public class UI : MonoBehaviour
        public  TMP_InputField txt_password;
 
        public TMP_Text txt_leaderboard;
+        [SerializeField]
+       private StatusText statusText;
        public Button loginbtn;
         [SerializeField]
         private GameObject canvas;
@@ -35,9 +37,9 @@ public class UI : MonoBehaviour
            
              signalR.On("RegisterResult",(bool uspeh,string greska) => {
         if(uspeh) {
-            Debug.Log("Registracija je uspela, mozete da se login");
+            statusText.SetText("Registracija je uspela, mozete da se login");
         } else {
-            Debug.Log("Registracija nije uspela " + greska);
+            statusText.SetText("Registracija nije uspela " + greska);
         }
        });
 
@@ -52,7 +54,7 @@ public class UI : MonoBehaviour
             
 
         } else {
-            Debug.Log($"Login neuspesan: {token}");
+            statusText.SetText($"Login neuspesan: {token}");
         }
        });
        
@@ -88,7 +90,7 @@ public class UI : MonoBehaviour
         string password = txt_password.text;
 
         if(username == string.Empty || password == string.Empty) {
-             Debug.Log("Sva polja mora da budu popunjena!");
+             statusText.SetText("Sva polja mora da budu popunjena!");
              return;
         }
 
@@ -101,7 +103,7 @@ public class UI : MonoBehaviour
         string password = txt_password.text;
 
         if(username == string.Empty || password == string.Empty) {
-             Debug.Log("Sva polja mora da budu popunjena!");
+             statusText.SetText("Sva polja mora da budu popunjena!");
              return;
         }
 

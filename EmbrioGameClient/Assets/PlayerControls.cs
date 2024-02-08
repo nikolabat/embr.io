@@ -15,6 +15,7 @@ public string token = "";
     void Start()
     {
      coords = GameObject.Find("coords").GetComponent<TMP_Text>();   
+     coords.enabled = false;
     }
 
     // Update is called once per frame
@@ -39,6 +40,7 @@ public string token = "";
        
            
         }
+        if(Input.GetKeyUp(KeyCode.F2)) {coords.enabled = !coords.enabled;} 
         if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
         SignalRManager.GetSignalR().Invoke("Move",token,xdelta,ydelta);
         }

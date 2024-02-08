@@ -33,7 +33,11 @@ public class GameStateManager : MonoBehaviour
   
       [SerializeField]
     private GameObject kamera;
+    private Camera cam;
     [SerializeField]
+    private Material zamkaTex;
+    [SerializeField]
+
     private GameObject label;
     private Dictionary<long,GameObject> krugovi = new Dictionary<long, GameObject>();
     private Igra igra = null;
@@ -47,7 +51,7 @@ public class GameStateManager : MonoBehaviour
    
        
     public void Start() {
-        
+        cam = kamera.GetComponent<Camera>();
         signalR.On("gameTick",(HashSet<Krug> updated,HashSet<Krug> created,HashSet<long> destroyed) => {
             try {
            lock(update) {update.UnionWith(updated);}
@@ -115,7 +119,10 @@ public class GameStateManager : MonoBehaviour
                         var lbl = txt.GetComponent<TMP_Text>();
                         lbl.alignment =  TextAlignmentOptions.Center;
                         lbl.text = create.Label;
-                    } 
+                    } else if(create.tip == KrugTip.Zamka) {
+                        krug.GetComponent<SpriteRenderer>().material = zamkaTex;
+                    }
+
                     krug.name = create.EntityID.ToString();
     }
     public void Update() {
@@ -172,8 +179,13 @@ public class GameStateManager : MonoBehaviour
          lock(update) {foreach(var up in update) {
                 if(!krugovi.ContainsKey(up.EntityID)) {continue;}
                var krug = krugovi[up.EntityID];
+               
                     krug.transform.localScale = new Vector3(1,1,0) * up.R;
-                    krug.transform.position = new Vector3(up.Position.X,up.Position.Y,0);
+                    if(krug.transform.childCount == 2) {
+                        
+                        cam.orthographicSize = 40 + krug.transform.localScale.x;
+                    }
+                    krug.transform.position = new Vector3(up.Position.X,up.Position.Y,1);
                     
                    
             }

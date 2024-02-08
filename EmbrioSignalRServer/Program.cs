@@ -28,7 +28,7 @@ var app = builder.Build();
 
 
 app.MapHub<GameHub>("gameapi");
-
+Console.WriteLine("Ready");
 
 
 

@@ -26,9 +26,12 @@ public class LeaderboardService : BackgroundService
             
             this.rabbit = rabbit;
             _gameHub = gameHub;
+            Console.WriteLine("Gettting leaderboards from database");
             var lbs = rabbit.RpcCall("getLeaderboard");
+
             
             Leaderboard.Set(JsonSerializer.Deserialize<Dictionary<string,int>>((JsonElement)lbs));
+            Console.WriteLine("OK");
 
         }
 

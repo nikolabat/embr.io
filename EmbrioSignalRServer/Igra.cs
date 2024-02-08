@@ -191,14 +191,27 @@ public class Igra {
     }
     x = Math.Clamp(x,-0.5f,0.5f);
     y = Math.Clamp(y,-0.5f,0.5f);
-    
     var celija =  entities[id];
     float newx = celija.Position.X + x;
     float newy = celija.Position.Y + y;
     
-     if(newx < 0 || newy < 0 || newx > 10000 || newy > 10000) {
-        return skor;
+    
+    if (newx + celija.R / 2 >= 10000) {
+        newx = 10000 - celija.R / 2;
     }
+     
+    if(newy + celija.R / 2 >= 10000) {
+        newy = 10000 - celija.R / 2;
+    }
+    
+     if(newx - celija.R / 2 <= 0) {
+        newx = celija.R / 2;
+     }
+
+     if(newy - celija.R / 2 <= 0) {
+        newy = celija.R / 2;
+     }
+     
     celija.Position = new Point(newx,newy);
    
     UpdateEntity(celija);
